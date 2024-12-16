@@ -1,13 +1,36 @@
 <template>
     <div class="search-box">
-        <input />
-        <input type="date" />
-        <input type="date" />
-        <button>검색</button>
+        <input v-model.lazy="keyword" />
+        <input type="date" v-model="searchStartDate"/>
+        <input type="date" v-model="searchEndDate"/>
+        <button @click="handlerSearch">검색</button>
         <button>신규등록</button>
     </div>
 </template>
-<script></script>
+<script setup>
+import router from '@/router';
+const keyword = ref('');
+const searchStartDate = ref('');
+const searchEndDate = ref('');
+
+const handlerSearch = () => {
+    //1. url 파라미터 쿼리
+    const query = [];
+    !keyword.value || query.push(`searchTitle=${keyword.value}`);
+    !searchStartDate.value || query.push(`searchStartDate=${searchStartDate.value}`);
+    !searchEndDate.value || query.push(`searchEndDate=${searchEndDate.value}`);
+    
+    const queryString = query.length >0 ? `?${query.join('&')}` : '';
+
+    router.push(queryString);
+
+    console.log(queryString);
+};
+
+//인자로 받는 함수 안에 반응형 객체(ref 같은거)가 있으면, 객체가 변경될 때 마다 해당 함수를 실행시켜 줌
+//근데 watchEffect는 ref같은게 없음, 그래서 새로고침하면 최초에 한 번 실행됨됨
+watchEffect(() => window.location.search && router.push(window.location.pathname, {replace: true}));
+</script>
 
 <style lang="scss" scoped>
 .search-box {
