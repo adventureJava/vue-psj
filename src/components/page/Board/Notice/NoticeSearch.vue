@@ -17,14 +17,12 @@ const handlerSearch = () => {
     //1. url 파라미터 쿼리
     const query = [];
     !keyword.value || query.push(`searchTitle=${keyword.value}`);
-    !searchStartDate.value || query.push(`searchStartDate=${searchStartDate.value}`);
-    !searchEndDate.value || query.push(`searchEndDate=${searchEndDate.value}`);
+    !searchStartDate.value || query.push(`searchStDate=${searchStartDate.value}`);
+    !searchEndDate.value || query.push(`searchEdDate=${searchEndDate.value}`);
     
     const queryString = query.length >0 ? `?${query.join('&')}` : '';
 
     router.push(queryString);
-
-    console.log(queryString);
 };
 
 //인자로 받는 함수 안에 반응형 객체(ref 같은거)가 있으면, 객체가 변경될 때 마다 해당 함수를 실행시켜 줌
