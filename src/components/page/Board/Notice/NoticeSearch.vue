@@ -4,14 +4,17 @@
         <input type="date" v-model="searchStartDate"/>
         <input type="date" v-model="searchEndDate"/>
         <button @click="handlerSearch">검색</button>
-        <button>신규등록</button>
+        <button @click="handlerModal">신규등록</button>
     </div>
 </template>
 <script setup>
 import router from '@/router';
+import { useModalStore } from '../../../../stores/modalState';
+
 const keyword = ref('');
 const searchStartDate = ref('');
 const searchEndDate = ref('');
+const modalState = useModalStore();
 
 const handlerSearch = () => {
     //1. url 파라미터 쿼리
@@ -23,6 +26,10 @@ const handlerSearch = () => {
     const queryString = query.length >0 ? `?${query.join('&')}` : '';
 
     router.push(queryString);
+};
+
+const handlerModal = () => {
+    modalState.setModalState();
 };
 
 //인자로 받는 함수 안에 반응형 객체(ref 같은거)가 있으면, 객체가 변경될 때 마다 해당 함수를 실행시켜 줌
