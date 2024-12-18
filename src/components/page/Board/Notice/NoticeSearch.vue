@@ -1,40 +1,36 @@
 <template>
     <div class="search-box">
-        <input v-model.lazy="keyword" />
-        <input type="date" v-model="searchStartDate"/>
-        <input type="date" v-model="searchEndDate"/>
+        <input  v-model="searchKey.searchTitle"/>
+        <input type="date" v-model="searchKey.searchStartDate"/>
+        <input type="date"  v-model="searchKey.searchEndDate"/>
         <button @click="handlerSearch">검색</button>
-        <button @click="handlerModal">신규등록</button>
+        <!-- <button @click="() => $router.push('notice.do/insert')">신규등록</button> -->
+        <button @click="handleNewInsert">신규등록</button>
     </div>
 </template>
 <script setup>
-import router from '@/router';
-import { useModalStore } from '../../../../stores/modalState';
+import { useQueryClient } from '@tanstack/vue-query';
+import { inject } from 'vue';
+import router from '../../../../router';
 
-const keyword = ref('');
-const searchStartDate = ref('');
-const searchEndDate = ref('');
-const modalState = useModalStore();
+const injectedValue = inject('providedValue');
+const searchKey = ref({})
 
 const handlerSearch = () => {
-    //1. url 파라미터 쿼리
-    const query = [];
-    !keyword.value || query.push(`searchTitle=${keyword.value}`);
-    !searchStartDate.value || query.push(`searchStDate=${searchStartDate.value}`);
-    !searchEndDate.value || query.push(`searchEdDate=${searchEndDate.value}`);
-    
-    const queryString = query.length >0 ? `?${query.join('&')}` : '';
-
-    router.push(queryString);
+    injectedValue.value = { ...searchKey.value };
 };
 
-const handlerModal = () => {
-    modalState.setModalState();
+const queryClient = useQueryClient();
+
+const handleNewInsert = () => {
+    queryClient.removeQueries({
+        queryKey: ['noticeDetail'],
+    });
+
+    // 페이지 이동
+    router.push('notice.do/insert');
 };
 
-//인자로 받는 함수 안에 반응형 객체(ref 같은거)가 있으면, 객체가 변경될 때 마다 해당 함수를 실행시켜 줌
-//근데 watchEffect는 ref같은게 없음, 그래서 새로고침하면 최초에 한 번 실행됨됨
-watchEffect(() => window.location.search && router.push(window.location.pathname, {replace: true}));
 </script>
 
 <style lang="scss" scoped>
